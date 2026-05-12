@@ -1,4 +1,4 @@
-const { supabase } = require('../config/supabase');
+const { supabase, getIsConnected } = require('../config/supabase');
 const bcrypt = require('bcryptjs');
 
 // In-memory store for Demo Mode
@@ -8,7 +8,7 @@ const demoUsers = new Map();
  * User Model - Supabase Implementation with Demo Mode Fallback
  */
 class User {
-    static isDemoMode = false;
+    static get isDemoMode() { return !getIsConnected(); }
 
     /**
      * Create a new user

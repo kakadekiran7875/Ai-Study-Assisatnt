@@ -21,6 +21,8 @@ const supabase = createClient(supabaseUrl || '', supabaseKey || '', {
     },
 });
 
+let isConnected = false;
+
 /**
  * Test Supabase connection
  */
@@ -36,9 +38,11 @@ const connectDatabase = async () => {
             throw error;
         }
 
+        isConnected = true;
         console.log(`✅ Supabase Connected: ${supabaseUrl}`);
         console.log(`📊 Database: PostgreSQL (Supabase)`);
     } catch (error) {
+        isConnected = false;
         console.warn(`⚠️  Supabase Connection Failed: ${error.message}`);
         console.log(`🔄 Running in DEMO MODE (no database persistence)`);
         console.log(`📝 To use real database:`);
@@ -48,4 +52,4 @@ const connectDatabase = async () => {
     }
 };
 
-module.exports = { supabase, connectDatabase };
+module.exports = { supabase, connectDatabase, getIsConnected: () => isConnected };

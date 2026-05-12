@@ -11,10 +11,19 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
+// Logging middleware
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    if (req.method === 'POST') {
+        console.log('Body:', JSON.stringify(req.body, null, 2));
+    }
+    next();
+});
+
 // CORS configuration
 app.use(
     cors({
-        origin: process.env.CORS_ORIGIN || '*',
+        origin: '*', // Allow all origins for development
         credentials: true,
     })
 );
