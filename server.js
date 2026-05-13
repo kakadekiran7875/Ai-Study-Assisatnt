@@ -2,12 +2,14 @@ require('dotenv').config();
 const app = require('./src/app');
 const { connectDatabase } = require('./src/config/supabase');
 const { testOpenAIConnection } = require('./src/config/openai');
+const { testGeminiConnection } = require('./src/config/gemini');
 
 // Connect to database
 connectDatabase();
 
-// Test OpenAI connection (optional)
+// Test AI connections
 testOpenAIConnection();
+testGeminiConnection();
 
 const PORT = process.env.PORT || 5000;
 

@@ -29,6 +29,9 @@ class User {
                 login_type: userData.loginType || 'email',
                 role: userData.role || 'user',
                 google_id: userData.googleId || null,
+                mobile_number: userData.mobileNumber || null,
+                college: userData.college || null,
+                profile_photo_url: userData.profilePhotoUrl || null,
                 is_email_verified: userData.isEmailVerified || false,
                 last_login: new Date().toISOString(),
                 created_at: new Date().toISOString(),
@@ -47,6 +50,9 @@ class User {
                             login_type: dbData.login_type,
                             role: dbData.role,
                             google_id: dbData.google_id,
+                            mobile_number: dbData.mobile_number,
+                            college: dbData.college,
+                            profile_photo_url: dbData.profile_photo_url,
                             is_email_verified: dbData.is_email_verified,
                             last_login: dbData.last_login
                         }])
@@ -148,6 +154,10 @@ class User {
                         dbUpdates.password = await bcrypt.hash(updates.password, salt);
                     }
                     if (updates.refreshToken !== undefined) dbUpdates.refresh_token = updates.refreshToken;
+                    if (updates.mobile_number !== undefined) dbUpdates.mobile_number = updates.mobile_number;
+                    if (updates.college !== undefined) dbUpdates.college = updates.college;
+                    if (updates.profile_photo_url !== undefined) dbUpdates.profile_photo_url = updates.profile_photo_url;
+                    if (updates.role !== undefined) dbUpdates.role = updates.role;
 
                     const { data, error } = await supabase.from('users').update(dbUpdates).eq('id', id).select().single();
                     if (!error && data) return User._formatUser(data);
@@ -183,6 +193,9 @@ class User {
             password: dbUser.password,
             loginType: dbUser.login_type || dbUser.loginType,
             role: dbUser.role,
+            mobileNumber: dbUser.mobile_number,
+            college: dbUser.college,
+            profilePhotoUrl: dbUser.profile_photo_url,
             toJSON() {
                 const u = { ...this };
                 delete u.password;

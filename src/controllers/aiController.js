@@ -1,4 +1,5 @@
 const AIService = require('../services/aiService');
+const { supabase } = require('../config/supabase');
 
 /**
  * @desc    Generate notes from text content
@@ -102,10 +103,44 @@ const chat = async (req, res, next) => {
 
         const response = await AIService.chat(message, conversationHistory);
 
+        // Save to database (asynchronously)
+        supabase.from('ai_chats').insert([{
+            user_id: req.user.id,
+            question: message,
+            answer: response,
+            timestamp: new Date().toISOString()
+        }]).then(({ error }) => {
+            if (error) console.error('❌ Failed to save chat history:', error.message);
+        });
+
         res.status(200).json({
             success: true,
             message: 'AI response generated',
             data: { response },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Get chat history
+ * @route   GET /api/ai/chat/history
+ * @access  Private
+ */
+const getChatHistory = async (req, res, next) => {
+    try {
+        const { data, error } = await supabase
+            .from('ai_chats')
+            .select('*')
+            .eq('user_id', req.user.id)
+            .order('timestamp', { ascending: false });
+
+        if (error) throw error;
+
+        res.status(200).json({
+            success: true,
+            data,
         });
     } catch (error) {
         next(error);
@@ -173,6 +208,7 @@ module.exports = {
     generateQuiz,
     summarizeContent,
     chat,
+    getChatHistory,
     extractTextFromImage,
     generateFlashcards,
 };

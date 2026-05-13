@@ -6,6 +6,7 @@ const {
     generateQuiz,
     summarizeContent,
     chat,
+    getChatHistory,
     extractTextFromImage,
     generateFlashcards,
 } = require('../controllers/aiController');
@@ -44,6 +45,13 @@ router.post('/summarize', summarizeContent);
  * @body    { message: string, conversationHistory?: array }
  */
 router.post('/chat', chat);
+
+/**
+ * @route   GET /api/ai/chat/history
+ * @desc    Get chat history
+ * @access  Private
+ */
+router.get('/chat/history', getChatHistory);
 
 /**
  * @route   POST /api/ai/extract-text

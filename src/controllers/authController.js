@@ -238,6 +238,62 @@ const getProfile = async (req, res, next) => {
 };
 
 /**
+ * @desc    Update user profile
+ * @route   PUT /api/auth/profile
+ * @access  Private
+ */
+const updateProfile = async (req, res, next) => {
+    try {
+        const { name, mobileNumber, college, profilePhotoUrl } = req.body;
+        
+        const updates = {};
+        if (name) updates.name = name;
+        if (mobileNumber) updates.mobile_number = mobileNumber;
+        if (college) updates.college = college;
+        if (profilePhotoUrl) updates.profile_photo_url = profilePhotoUrl;
+
+        const updatedUser = await User.update(req.user.id, updates);
+
+        res.status(200).json({
+            success: true,
+            message: 'Profile updated successfully',
+            user: updatedUser.toJSON(),
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Forgot password (placeholder for email service)
+ * @route   POST /api/auth/forgot-password
+ * @access  Public
+ */
+const forgotPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'No user found with that email',
+            });
+        }
+
+        // In a real app, you would send a reset email here
+        // For Supabase, you can use supabase.auth.resetPasswordForEmail(email)
+
+        res.status(200).json({
+            success: true,
+            message: 'Password reset instructions sent to your email',
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
  * @desc    Logout user
  * @route   POST /api/auth/logout
  * @access  Private
@@ -302,6 +358,8 @@ module.exports = {
     googleLogin,
     guestLogin,
     getProfile,
+    updateProfile,
+    forgotPassword,
     logout,
     refreshToken,
 };
